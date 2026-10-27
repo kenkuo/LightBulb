@@ -120,6 +120,23 @@ public partial class LocalizationManager
     public string AdvancedTabName => Get();
     public string AppWhitelistTabName => Get();
     public string HotkeysTabName => Get();
+    public string MonitorsTabName => Get();
+
+    // ---- Monitor settings tab ----
+
+    public string RefreshMonitorsLabel => Get();
+    public string FilterMonitorLabel => Get();
+    public string CustomMonitorConfigLabel => Get();
+    public string CustomMonitorConfigTooltip => Get();
+    public string HdrProfileLabel => Get();
+    public string HdrProfileTooltip => Get();
+    public string HdrTransitionsLabel => Get();
+    public string HdrTransitionsTooltip => Get();
+    public string HdrSupportedLabel => Get();
+    public string HdrUnsupportedLabel => Get();
+    public string SdrMonitorLabel => Get();
+    public string NoMonitorsLabel => Get();
+    public string MirroredMonitorsWarning => Get();
 
     // ---- Advanced settings tab ----
 

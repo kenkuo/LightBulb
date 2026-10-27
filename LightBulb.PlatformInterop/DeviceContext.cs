@@ -1,21 +1,41 @@
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using LightBulb.PlatformInterop.Internal;
 
 namespace LightBulb.PlatformInterop;
 
-public partial class DeviceContext(nint handle) : NativeResource(handle)
+public partial class DeviceContext : NativeResource
 {
+    private readonly IDeviceGammaApi _api;
+    private GammaRamp? _lastGammaRamp;
     private int _gammaChannelOffset;
 
-    private void SetGammaRamp(GammaRamp ramp)
+    public DeviceContext(nint handle)
+        : this(handle, new DeviceGammaApi()) { }
+
+    internal DeviceContext(nint handle, IDeviceGammaApi api)
+        : base(handle) => _api = api;
+
+    public bool IsGammaCurrent()
     {
-        if (!NativeMethods.SetDeviceGammaRamp(Handle, ref ramp))
+        if (_lastGammaRamp is not { } expected)
+            return false;
+
+        var actual = _api.GetGammaRamp(Handle);
+        return Matches(expected.Red, actual.Red)
+            && Matches(expected.Green, actual.Green)
+            && Matches(expected.Blue, actual.Blue);
+
+        static bool Matches(ushort[] expected, ushort[] actual)
         {
-            Debug.WriteLine(
-                $"Failed to set gamma ramp on device context #{Handle}). "
-                    + $"Error {Marshal.GetLastWin32Error()}."
-            );
+            for (var i = 0; i < expected.Length; i++)
+            {
+                // Ignore rounding by drivers whose LUT precision is lower than 16 bits.
+                if (Math.Abs(expected[i] - actual[i]) > byte.MaxValue)
+                    return false;
+            }
+            return true;
         }
     }
 
@@ -45,7 +65,8 @@ public partial class DeviceContext(nint handle) : NativeResource(handle)
         ramp.Green[255] = (ushort)(ramp.Green[255] + _gammaChannelOffset);
         ramp.Blue[255] = (ushort)(ramp.Blue[255] + _gammaChannelOffset);
 
-        SetGammaRamp(ramp);
+        _api.SetGammaRamp(Handle, ramp);
+        _lastGammaRamp = ramp;
     }
 
     public void ResetGamma() => SetGamma(1, 1, 1);
@@ -56,13 +77,7 @@ public partial class DeviceContext(nint handle) : NativeResource(handle)
         // the device context gets invalidated.
         // Resetting gamma in such cases will cause unwanted flickering.
         // https://github.com/Tyrrrz/LightBulb/issues/206
-        if (!NativeMethods.DeleteDC(Handle))
-        {
-            Debug.WriteLine(
-                $"Failed to dispose device context #{Handle}. "
-                    + $"Error {Marshal.GetLastWin32Error()}."
-            );
-        }
+        _api.DeleteDC(Handle);
     }
 }
 

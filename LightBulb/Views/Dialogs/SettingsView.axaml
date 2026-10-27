@@ -16,37 +16,39 @@
       VerticalAlignment="Stretch"
       Background="{DynamicResource MaterialDarkBackgroundBrush}"
     >
-      <ItemsControl ItemsSource="{Binding Tabs}">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-            <Border BorderThickness="0,0,2,0" Classes.active="{Binding IsActive}">
-              <Border.Styles>
-                <Style Selector="Border.active">
-                  <Setter
-                    Property="BorderBrush"
-                    Value="{DynamicResource MaterialSecondaryMidBrush}"
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <ItemsControl ItemsSource="{Binding Tabs}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border BorderThickness="0,0,2,0" Classes.active="{Binding IsActive}">
+                <Border.Styles>
+                  <Style Selector="Border.active">
+                    <Setter
+                      Property="BorderBrush"
+                      Value="{DynamicResource MaterialSecondaryMidBrush}"
+                    />
+                  </Style>
+                </Border.Styles>
+                <Button
+                  Margin="4"
+                  Padding="8"
+                  Command="{Binding $parent[UserControl].((dialogs:SettingsViewModel)DataContext).ActivateTabCommand}"
+                  CommandParameter="{Binding}"
+                  Foreground="{DynamicResource MaterialDarkForegroundBrush}"
+                  Theme="{DynamicResource MaterialFlatButton}"
+                  ToolTip.Tip="{Binding DisplayName}"
+                >
+                  <materialIcons:MaterialIcon
+                    Width="24"
+                    Height="24"
+                    Kind="{Binding Converter={x:Static converters:SettingsTabToMaterialIconKindConverter.Instance}}"
                   />
-                </Style>
-              </Border.Styles>
-              <Button
-                Margin="4"
-                Padding="8"
-                Command="{Binding $parent[UserControl].((dialogs:SettingsViewModel)DataContext).ActivateTabCommand}"
-                CommandParameter="{Binding}"
-                Foreground="{DynamicResource MaterialDarkForegroundBrush}"
-                Theme="{DynamicResource MaterialFlatButton}"
-                ToolTip.Tip="{Binding DisplayName}"
-              >
-                <materialIcons:MaterialIcon
-                  Width="24"
-                  Height="24"
-                  Kind="{Binding Converter={x:Static converters:SettingsTabToMaterialIconKindConverter.Instance}}"
-                />
-              </Button>
-            </Border>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
+                </Button>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
     </Border>
 
     <Grid

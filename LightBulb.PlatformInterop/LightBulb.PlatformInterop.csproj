@@ -2,5 +2,11 @@
   <ItemGroup>
     <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
     <PackageReference Include="PowerKit" />
+    <PackageReference Include="Vortice.DXGI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LightBulb.Core\LightBulb.Core.csproj" />
+    <InternalsVisibleTo Include="LightBulb.Core.Tests" />
   </ItemGroup>
 </Project>

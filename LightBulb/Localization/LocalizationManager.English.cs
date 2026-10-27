@@ -39,6 +39,34 @@ public partial class LocalizationManager
             [nameof(AdvancedTabName)] = "Advanced",
             [nameof(AppWhitelistTabName)] = "Application whitelist",
             [nameof(HotkeysTabName)] = "Hotkeys",
+            [nameof(MonitorsTabName)] = "Monitors",
+            [nameof(RefreshMonitorsLabel)] = "REFRESH MONITORS",
+            [nameof(FilterMonitorLabel)] = "Filter this monitor",
+            [nameof(CustomMonitorConfigLabel)] = "Separate day/night settings",
+            [nameof(CustomMonitorConfigTooltip)] =
+                "Override the general temperature and brightness settings for this monitor. The schedule, preview and global hotkeys remain shared.",
+            [nameof(HdrProfileLabel)] = "HDR profile switching (MHC2)",
+            [nameof(HdrProfileTooltip)] = """
+                Use Windows' HDR-aware color pipeline instead of legacy gamma ramps on this monitor.
+
+                LightBulb temporarily installs and switches between two HDR color profiles, preserving the existing calibration. The original profile is restored when filtering stops or LightBulb exits.
+                By default, HDR switches directly between day/night settings at each transition's midpoint, without smoothing or periodic profile reassertion. SDR transitions remain gradual.
+                Windows may require administrator privileges to install profiles.
+                """,
+            [nameof(HdrTransitionsLabel)] = "Continuous HDR transitions (may flash all monitors)",
+            [nameof(HdrTransitionsTooltip)] = """
+                Follow gradual transitions and smoothing using repeated HDR profile switches.
+
+                Windows or the driver may briefly remove the tint from ALL monitors whenever an HDR profile is selected. This can cause recurring flashing, including when gamma polling reasserts a profile.
+                Leave this disabled to hold stable day/night settings and avoid repeated profile switches. A single flash may still occur when the HDR setting actually changes, such as at a transition midpoint, on pause, or after a manual adjustment.
+                """,
+            [nameof(HdrSupportedLabel)] = "HDR enabled; MHC2 color adjustment supported",
+            [nameof(HdrUnsupportedLabel)] =
+                "HDR enabled; this Windows version or display driver does not expose MHC2 support",
+            [nameof(SdrMonitorLabel)] = "SDR display; uses the existing gamma-ramp backend",
+            [nameof(NoMonitorsLabel)] = "No active monitors found",
+            [nameof(MirroredMonitorsWarning)] =
+                "Mirrored displays share one color pipeline. Use Windows' Extend mode for independent monitor controls.",
             // Advanced settings tab
             [nameof(ThemeLabel)] = "Theme",
             [nameof(ThemeTooltip)] = "Preferred user interface theme",

@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="LightBulb.Core.Tests" />
     <ProjectReference Include="../LightBulb.Core/LightBulb.Core.csproj" />
     <ProjectReference Include="../LightBulb.PlatformInterop/LightBulb.PlatformInterop.csproj" />
   </ItemGroup>

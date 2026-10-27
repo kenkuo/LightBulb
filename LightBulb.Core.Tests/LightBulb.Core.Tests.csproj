@@ -20,5 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../LightBulb.Core/LightBulb.Core.csproj" />
+    <ProjectReference Include="..\LightBulb.PlatformInterop\LightBulb.PlatformInterop.csproj" />
+    <ProjectReference Include="..\LightBulb\LightBulb.csproj" />
   </ItemGroup>
 </Project>

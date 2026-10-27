@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.Json.Serialization;
 using Cogwheel;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -110,6 +111,37 @@ public partial class SettingsService()
 
     [ObservableProperty]
     public partial bool IsGammaPollingEnabled { get; set; }
+
+    [ObservableProperty]
+    public partial IReadOnlyDictionary<
+        string,
+        MonitorConfiguration
+    > MonitorConfigurations { get; set; } =
+        new Dictionary<string, MonitorConfiguration>(StringComparer.OrdinalIgnoreCase);
+
+    public MonitorConfiguration GetMonitorConfiguration(string monitorId) =>
+        MonitorConfigurations
+            .FirstOrDefault(p =>
+                string.Equals(p.Key, monitorId, StringComparison.OrdinalIgnoreCase)
+            )
+            .Value
+        ?? new MonitorConfiguration
+        {
+            DayConfiguration = DayConfiguration,
+            NightConfiguration = NightConfiguration,
+        };
+
+    public void SetMonitorConfiguration(string monitorId, MonitorConfiguration configuration)
+    {
+        var configurations = new Dictionary<string, MonitorConfiguration>(
+            MonitorConfigurations,
+            StringComparer.OrdinalIgnoreCase
+        )
+        {
+            [monitorId] = configuration,
+        };
+        MonitorConfigurations = configurations;
+    }
 
     // Application whitelist
 

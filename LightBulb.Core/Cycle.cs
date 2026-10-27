@@ -107,6 +107,29 @@ public static class Cycle
         return nightValue;
     }
 
+    public static ColorConfiguration SelectConfiguration(
+        SolarTimes solarTimes,
+        ColorConfiguration dayConfiguration,
+        ColorConfiguration nightConfiguration,
+        TimeSpan transitionDuration,
+        double transitionOffset,
+        DateTimeOffset instant
+    )
+    {
+        var sunriseMidpoint = GetSunriseStart(
+                solarTimes.Sunrise,
+                transitionDuration,
+                transitionOffset
+            )
+            .Add(transitionDuration / 2);
+        var sunsetMidpoint = GetSunsetStart(solarTimes.Sunset, transitionDuration, transitionOffset)
+            .Add(transitionDuration / 2);
+
+        return instant.ToTimeOnly().IsBetween(sunriseMidpoint, sunsetMidpoint)
+            ? dayConfiguration
+            : nightConfiguration;
+    }
+
     public static ColorConfiguration InterpolateConfiguration(
         SolarTimes solarTimes,
         ColorConfiguration dayConfiguration,

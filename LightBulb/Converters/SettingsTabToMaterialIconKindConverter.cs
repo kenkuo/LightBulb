@@ -18,6 +18,7 @@ public class SettingsTabToMaterialIconKindConverter : IValueConverter
             AdvancedSettingsTabViewModel => MaterialIconKind.CheckboxesMarked,
             ApplicationWhitelistSettingsTabViewModel => MaterialIconKind.Apps,
             HotKeySettingsTabViewModel => MaterialIconKind.Keyboard,
+            MonitorsSettingsTabViewModel => MaterialIconKind.Monitor,
             // Shouldn't happen
             _ => MaterialIconKind.QuestionMark,
         };

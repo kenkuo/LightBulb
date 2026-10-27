@@ -32,8 +32,7 @@ public partial class DashboardViewModel : ViewModelBase
     private readonly Timer _updateIsPausedTimer;
 
     private IDisposable? _enableAfterDelayRegistration;
-    private ColorConfiguration? _configurationSmoothingSource;
-    private ColorConfiguration? _configurationSmoothingTarget;
+    private readonly ColorConfigurationSmoother _configurationSmoother = new();
 
     public DashboardViewModel(
         SettingsService settingsService,
@@ -50,6 +49,10 @@ public partial class DashboardViewModel : ViewModelBase
         _externalApplicationService = externalApplicationService;
 
         _eventSubscription = Disposable.Merge(
+            gammaService.WatchProperty(
+                o => o.ErrorMessage,
+                _ => OnPropertyChanged(nameof(ColorAdjustmentError))
+            ),
             this.WatchProperty(
                 o => o.IsEnabled,
                 v =>
@@ -104,6 +107,8 @@ public partial class DashboardViewModel : ViewModelBase
     }
 
     public LocalizationManager LocalizationManager { get; }
+
+    public string? ColorAdjustmentError => _gammaService.ErrorMessage;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsActive))]
@@ -359,62 +364,22 @@ public partial class DashboardViewModel : ViewModelBase
 
     private void UpdateConfiguration()
     {
-        var isSmooth =
-            !IsCyclePreviewEnabled
-            && CurrentConfiguration != TargetConfiguration
-            && _settingsService.IsConfigurationSmoothingEnabled
-            && _settingsService.ConfigurationSmoothingMaxDuration.TotalSeconds >= 0.1;
-
-        if (isSmooth)
-        {
-            // Check if the target configuration has changed since the last transition started
-            if (
-                _configurationSmoothingTarget != TargetConfiguration
-                || _configurationSmoothingSource is null
-            )
-            {
-                _configurationSmoothingSource = CurrentConfiguration;
-                _configurationSmoothingTarget = TargetConfiguration;
-            }
-
-            var brightnessDelta = Math.Abs(
-                _configurationSmoothingTarget.Value.Brightness
-                    - _configurationSmoothingSource.Value.Brightness
-            );
-
-            var brightnessStep = Math.Max(
-                brightnessDelta
-                    / _settingsService.ConfigurationSmoothingMaxDuration.TotalSeconds
-                    * _updateConfigurationTimer.Interval.TotalSeconds,
-                0.08
-            );
-
-            var temperatureDelta = Math.Abs(
-                _configurationSmoothingTarget.Value.Temperature
-                    - _configurationSmoothingSource.Value.Temperature
-            );
-
-            var temperatureStep = Math.Max(
-                temperatureDelta
-                    / _settingsService.ConfigurationSmoothingMaxDuration.TotalSeconds
-                    * _updateConfigurationTimer.Interval.TotalSeconds,
-                30
-            );
-
-            CurrentConfiguration = CurrentConfiguration.StepTo(
-                TargetConfiguration,
-                temperatureStep,
-                brightnessStep
-            );
-        }
-        else
-        {
-            CurrentConfiguration = TargetConfiguration;
-            _configurationSmoothingSource = null;
-            _configurationSmoothingTarget = null;
-        }
-
-        _gammaService.SetGamma(CurrentConfiguration);
+        CurrentConfiguration = _configurationSmoother.Update(
+            TargetConfiguration,
+            !IsCyclePreviewEnabled && _settingsService.IsConfigurationSmoothingEnabled,
+            _settingsService.ConfigurationSmoothingMaxDuration,
+            _updateConfigurationTimer.Interval
+        );
+        _gammaService.SetGamma(
+            CurrentConfiguration,
+            SolarTimes,
+            Instant,
+            IsActive,
+            IsCyclePreviewEnabled,
+            TemperatureOffset,
+            BrightnessOffset,
+            _updateConfigurationTimer.Interval
+        );
     }
 
     private void UpdateIsPaused()

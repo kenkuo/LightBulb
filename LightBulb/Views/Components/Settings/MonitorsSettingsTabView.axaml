@@ -1,0 +1,173 @@
+<UserControl
+  x:Class="LightBulb.Views.Components.Settings.MonitorsSettingsTabView"
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:converters="clr-namespace:LightBulb.Converters"
+  xmlns:platform="clr-namespace:LightBulb.PlatformInterop;assembly=LightBulb.PlatformInterop"
+  xmlns:settings="clr-namespace:LightBulb.ViewModels.Components.Settings"
+  x:DataType="settings:MonitorsSettingsTabViewModel"
+>
+  <StackPanel Margin="16" Spacing="16">
+    <ComboBox
+      HorizontalAlignment="Stretch"
+      ItemsSource="{Binding Monitors}"
+      SelectedItem="{Binding SelectedMonitor}"
+    >
+      <ComboBox.ItemTemplate>
+        <DataTemplate x:DataType="platform:DisplayDevice">
+          <TextBlock TextTrimming="CharacterEllipsis">
+            <TextBlock.Text>
+              <MultiBinding StringFormat="{}{0} ({1})">
+                <Binding Path="FriendlyName" />
+                <Binding Path="DeviceName" />
+              </MultiBinding>
+            </TextBlock.Text>
+          </TextBlock>
+        </DataTemplate>
+      </ComboBox.ItemTemplate>
+    </ComboBox>
+    <Button
+      Command="{Binding RefreshMonitorsCommand}"
+      Content="{Binding LocalizationManager.RefreshMonitorsLabel}"
+      Theme="{DynamicResource MaterialFlatButton}"
+    />
+    <TextBlock Text="{Binding MonitorStatus}" TextWrapping="Wrap" />
+    <Grid ColumnDefinitions="*,Auto" IsEnabled="{Binding HasIndependentMonitor}">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{Binding LocalizationManager.FilterMonitorLabel}"
+        TextWrapping="Wrap"
+      />
+      <ToggleSwitch Grid.Column="1" IsChecked="{Binding IsMonitorEnabled}" />
+    </Grid>
+    <Grid ColumnDefinitions="*,Auto" IsEnabled="{Binding IsHdrProfileAvailable}">
+      <ToolTip.Tip>
+        <TextBlock
+          MaxWidth="350"
+          Text="{Binding LocalizationManager.HdrProfileTooltip}"
+          TextWrapping="Wrap"
+        />
+      </ToolTip.Tip>
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{Binding LocalizationManager.HdrProfileLabel}"
+        TextWrapping="Wrap"
+      />
+      <ToggleSwitch Grid.Column="1" IsChecked="{Binding UseHdrProfile}" />
+    </Grid>
+    <Grid ColumnDefinitions="*,Auto" IsEnabled="{Binding IsHdrTransitionsAvailable}">
+      <ToolTip.Tip>
+        <TextBlock
+          MaxWidth="350"
+          Text="{Binding LocalizationManager.HdrTransitionsTooltip}"
+          TextWrapping="Wrap"
+        />
+      </ToolTip.Tip>
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{Binding LocalizationManager.HdrTransitionsLabel}"
+        TextWrapping="Wrap"
+      />
+      <ToggleSwitch Grid.Column="1" IsChecked="{Binding UseHdrTransitions}" />
+    </Grid>
+    <Grid
+      ColumnDefinitions="*,Auto"
+      IsEnabled="{Binding HasIndependentMonitor}"
+      ToolTip.Tip="{Binding LocalizationManager.CustomMonitorConfigTooltip}"
+    >
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{Binding LocalizationManager.CustomMonitorConfigLabel}"
+        TextWrapping="Wrap"
+      />
+      <ToggleSwitch Grid.Column="1" IsChecked="{Binding UseCustomConfiguration}" />
+    </Grid>
+    <StackPanel IsEnabled="{Binding IsCustomConfigurationActive}" Spacing="24">
+      <StackPanel Spacing="12">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock
+            VerticalAlignment="Center"
+            Text="{Binding LocalizationManager.DayTemperatureLabel}"
+          />
+          <TextBox
+            Grid.Column="1"
+            MinWidth="40"
+            Text="{Binding DayTemperature, Converter={x:Static converters:DoubleToStringConverter.Instance}, UpdateSourceTrigger=LostFocus}"
+            Theme="{DynamicResource CompactTextBox}"
+          />
+        </Grid>
+        <Slider
+          Minimum="500"
+          Maximum="20000"
+          TickFrequency="20"
+          IsSnapToTickEnabled="True"
+          Value="{Binding DayTemperature}"
+        />
+      </StackPanel>
+      <StackPanel Spacing="12">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock
+            VerticalAlignment="Center"
+            Text="{Binding LocalizationManager.NightTemperatureLabel}"
+          />
+          <TextBox
+            Grid.Column="1"
+            MinWidth="40"
+            Text="{Binding NightTemperature, Converter={x:Static converters:DoubleToStringConverter.Instance}, UpdateSourceTrigger=LostFocus}"
+            Theme="{DynamicResource CompactTextBox}"
+          />
+        </Grid>
+        <Slider
+          Minimum="500"
+          Maximum="20000"
+          TickFrequency="20"
+          IsSnapToTickEnabled="True"
+          Value="{Binding NightTemperature}"
+        />
+      </StackPanel>
+      <StackPanel Spacing="12">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock
+            VerticalAlignment="Center"
+            Text="{Binding LocalizationManager.DayBrightnessLabel}"
+          />
+          <TextBox
+            Grid.Column="1"
+            MinWidth="40"
+            Text="{Binding DayBrightness, Converter={x:Static converters:FractionToPercentageStringConverter.Instance}, UpdateSourceTrigger=LostFocus}"
+            Theme="{DynamicResource CompactTextBox}"
+          />
+        </Grid>
+        <Slider
+          Minimum="0.1"
+          Maximum="1"
+          TickFrequency="0.01"
+          IsSnapToTickEnabled="True"
+          Value="{Binding DayBrightness}"
+        />
+      </StackPanel>
+      <StackPanel Spacing="12">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock
+            VerticalAlignment="Center"
+            Text="{Binding LocalizationManager.NightBrightnessLabel}"
+          />
+          <TextBox
+            Grid.Column="1"
+            MinWidth="40"
+            Text="{Binding NightBrightness, Converter={x:Static converters:FractionToPercentageStringConverter.Instance}, UpdateSourceTrigger=LostFocus}"
+            Theme="{DynamicResource CompactTextBox}"
+          />
+        </Grid>
+        <Slider
+          Minimum="0.1"
+          Maximum="1"
+          TickFrequency="0.01"
+          IsSnapToTickEnabled="True"
+          Value="{Binding NightBrightness}"
+        />
+      </StackPanel>
+    </StackPanel>
+    <TextBlock Foreground="DarkRed" Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
+  </StackPanel>
+</UserControl>

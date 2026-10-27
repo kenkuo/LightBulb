@@ -57,6 +57,7 @@ public partial class App : Application, IDisposable
         services.AddTransient<SettingsTabViewModelBase, GeneralSettingsTabViewModel>();
         services.AddTransient<SettingsTabViewModelBase, HotKeySettingsTabViewModel>();
         services.AddTransient<SettingsTabViewModelBase, LocationSettingsTabViewModel>();
+        services.AddTransient<SettingsTabViewModelBase, MonitorsSettingsTabViewModel>();
 
         _services = services.BuildServiceProvider(true);
         _settingsService = _services.GetRequiredService<SettingsService>();

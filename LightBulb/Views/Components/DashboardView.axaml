@@ -9,7 +9,17 @@
   x:Name="UserControl"
   x:DataType="components:DashboardViewModel"
 >
-  <Grid ColumnDefinitions="*,Auto,*">
+  <Grid ColumnDefinitions="*,Auto,*" RowDefinitions="Auto,Auto">
+    <TextBlock
+      Grid.Row="1"
+      Grid.ColumnSpan="3"
+      Margin="8,4"
+      MaxHeight="40"
+      Foreground="DarkRed"
+      Text="{Binding ColorAdjustmentError}"
+      ToolTip.Tip="{Binding ColorAdjustmentError}"
+      TextWrapping="Wrap"
+    />
     <!--  Sunset time  -->
     <TextBlock
       Grid.Column="0"
